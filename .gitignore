@@ -1,11 +1,99 @@
-# Service account keys — never commit these.
+# ==========================================================
+# SECURITY & CREDENTIALS — NEVER COMMIT
+# ==========================================================
+# Google Cloud / Workspace service account keys
 credentials.json
-*.pem
 service-account*.json
+*-service-account.json
+*.pem
+*.key
+*.p12
+*.pfx
 
-# Local state
-.venv/
-__pycache__/
-*.pyc
-.pytest_cache/
+# Environment files (may contain tokens, project IDs, secrets)
+.env
+.env.*
+!.env.example
+
+# OAuth tokens & client secrets
+client_secret*.json
+token.json
+token.pickle
+
+# Local directory snapshots (may contain PII from HR / real tenant)
 snapshot.local.json
+snapshot.production.json
+snapshot.staging.json
+data/snapshot.*.local.json
+
+# ==========================================================
+# PYTHON
+# ==========================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging / build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# Test & coverage artifacts
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Type checking / linting caches
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+
+# ==========================================================
+# IDE & EDITOR
+# ==========================================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# ==========================================================
+# OS ARTIFACTS
+# ==========================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================================
+# PROJECT-SPECIFIC
+# ==========================================================
+# Generated plans / audit logs from local dry-runs
+plans/
+logs/
+*.log
+audit-*.jsonl
+
+# Temporary exports
+tmp/
+temp/
+*.tmp

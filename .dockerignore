@@ -1,0 +1,16 @@
+# .dockerignore
+.git
+.github
+.vscode
+__pycache__
+*.pyc
+*.pyo
+tests/
+docs/
+data/snapshot.production.json
+credentials.json
+.venv
+venv/
+.env
+*.md
+LICENSE
