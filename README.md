@@ -1,10 +1,6 @@
 <div align="center">
 
-# ☁️ Workspace Provisioning Engine
-
-**Idempotent Joiner-Mover-Leaver (JML) automation for Google Workspace**
-
-*Reconcile HR truth with directory state — purely, safely, and without credentials.*
+# ☁️ Cloud-Native Workspace Provisioning & IAM Automation
 
 [![CI](https://github.com/ongunakaycom/workspace-provisioning-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/ongunakaycom/workspace-provisioning-demo/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)](https://www.python.org)
@@ -12,106 +8,109 @@
 [![Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
+**Idempotent Joiner-Mover-Leaver (JML) automation for Google Workspace.**  
+*Reconcile HR truth with directory state — purely, safely, and without credentials.*
+
+A production-grade Python engine demonstrating **Infrastructure-as-Code principles applied to Identity & Access Management (IAM)**.  
+This repository serves as a comprehensive hands-on lab for Platform Engineering, Identity Automation, and Zero-Trust Provisioning.
+
 </div>
 
 ---
 
-## 🎯 Executive Summary
-
-A production-grade demonstration of **Infrastructure-as-Code principles applied to Identity & Access Management (IAM)**. The goal: replace brittle, one-off provisioning scripts with a pure, testable, and fully idempotent reconciliation engine that treats Google Workspace like a declarative state machine.
-
-**Key Achievements:**
-- 🧠 **Pure Planner** — `build_plan()` has zero side effects, zero network calls, and 100% unit-testable logic.
-- 🔁 **Strict Idempotency** — Running twice yields the same plan; running against an applied state yields zero actions.
-- 🛡 **Safety by Default** — Dry-run is the default. Production mutations require an explicit `--apply` flag.
-- 🧪 **Offline Testing** — 26 end-to-end and unit tests pass on a bare Python 3.11+ install with no external dependencies.
-- ⚡ **Resilient API Layer** — Exponential backoff with `Retry-After` support for Google’s aggressive 429 rate limits.
-
----
-
-## 🏗 Architecture
+## 🏛️ Architecture & Workflow
 
 ```text
-┌────────────────────────────────────────────────────────┐
-│                 HR Truth (CSV)                         │
-│            data/new_hires.example.csv                  │
-└──────────────────────────┬─────────────────────────────┘
-                           │
-            ┌──────────────┴──────────────┐
-            │                             │
-     ┌──────▼──────┐               ┌──────▼──────┐
-     │ load_employees│             │  Snapshot   │
-     │  (pure)      │             │ (JSON/API)  │
-     └──────┬──────┘               └──────┬──────┘
-            │                             │
-            └──────────────┬──────────────┘
-                           │
-                ┌──────────▼──────────┐
-                │    build_plan()     │
-                │  (Pure Function)    │
-                └──────────┬──────────┘
-                           │
-                ┌──────────▼──────────┐
-                │   [Action] List     │
-                │  (Diff / Dry-Run)   │
-                └──────────┬──────────┘
-                           │
-            ┌──────────────┴──────────────┐
-            │                             │
-     ┌──────▼──────┐               ┌──────▼──────┐
-     │  print()    │               │  execute()  │
-     │  (Dry-Run)  │               │  (--apply)  │
-     └─────────────┘               └──────┬──────┘
-                                          │
-                               ┌──────────▼──────────┐
-                               │   Google Admin SDK  │
-                               │   (Fake or Real)    │
-                               └─────────────────────┘
+[ HR Truth (CSV) ] ──┐
+                     │
+[ Directory Snapshot ] ──► [ build_plan() ] ──► [ Action List ] ──┬─► [ print() ] (Dry-Run)
+                     │      (Pure Function)                       │
+[ Config Policy ] ───┘                                            └─► [ execute() ] (Apply)
+                                                                        │
+                                                                        ▼
+                                                              [ Google Admin SDK ]
+                                                              (Fake or Real Tenant)
+                                                                        │
+                                                                        ▼
+                                                              [ Idempotent State ]
 ```
 
-**Engineering Decision:** The planner is separated from the executor. `build_plan()` is a pure function that takes HR data and a directory snapshot and returns a list of actions. This means you can review the entire diff before anything is written, and you can test every branch of the decision logic without mocking a single API.
+**Engineering Principle:** The planner (`build_plan`) is a **pure function** — zero network calls, zero side effects. It calculates the exact diff between desired state (HR) and actual state (Directory). The executor (`execute`) is the *only* component that mutates state, and it only runs when explicitly invoked via `--apply`.
 
 ---
 
-## ⚙️ Tech Stack
+## 🛠️ Tech Stack & Engineering Decisions
 
-| Layer | Technology | Rationale |
-|-------|------------|-----------|
-| **Language** | Python 3.11+ | Zero dependencies, stdlib only. |
-| **Planner** | Pure functions | Deterministic, side-effect-free, fully testable. |
-| **Directory API** | Google Admin SDK | Real tenant execution with retry/backoff. |
-| **Testing** | `unittest` | 26 tests, offline, no credentials required. |
-| **CLI** | `argparse` | Explicit `--apply` gate for production safety. |
-| **Alt. Runtime** | Apps Script | Lightweight variant for one-off Sheet-based runs. |
+| Layer | Technology | Engineering Decision |
+|-------|------------|----------------------|
+| **Application** | Python 3.11+ | Zero external dependencies. Stdlib only. |
+| **Testing** | `unittest` | 26 tests. 100% offline. No credentials required. |
+| **CI (Integration)** | GitHub Actions | Automated tests on every push/PR. Matrix: Python 3.11 & 3.12. |
+| **API Layer** | Google Admin SDK | Resilient execution with `429` and `5xx` retry logic. |
+| **Safety Gate** | `--apply` flag | Dry-run by default. Mutations require explicit intent. |
+| **Policy Engine** | `Config.allowed_ous` | Fail-fast OU allowlist. Prevents silent policy dead zones. |
+| **Alt. Runtime** | Google Apps Script | Lightweight variant for ad-hoc admin execution via Sheets. |
 
 ---
 
-## 🧠 Engineering Highlights
+## 📂 Repository Structure
 
-### 1. Plan and Apply Are Separate
-`build_plan(employees, snapshot, config)` is a pure function. No network, no Google imports, no side effects. You can read the entire diff before anything is written, and you can test every branch of the decision logic cheaply.
+```text
+.
+├── .github/workflows/ci.yml       # CI: Matrix testing, offline verification
+├── apps_script/                   # Google Apps Script variant (Code.gs)
+├── data/                          # Example HR CSVs & directory snapshots
+├── docs/                          # Architecture & onboarding documentation
+├── provisioner/                   # Core Logic
+│   ├── models.py                  # Domain models (Employee, UserState, Action, Config)
+│   ├── plan.py                    # The Pure Planner (build_plan)
+│   ├── directory.py               # API abstraction (FakeDirectory, GoogleDirectory)
+│   └── cli.py                     # CLI entry point (dry-run, apply)
+├── tests/                         # Unit & E2E tests (offline)
+├── .gitignore
+├── LICENSE
+└── README.md
+```
 
-### 2. Every Action Is Idempotent
-Actions are derived from the difference between HR and the current directory, never from a script that assumes it is the first run. Running twice produces the same plan; running against the post-apply state produces an empty one.
+---
 
-### 3. Fail-Fast on Typos
-`Config.allowed_ous` is an allowlist. A child OU is only allowed when one of its parents is. An HR export with `/Enginering` stops the run with exit code 2 instead of quietly creating a policy dead zone.
+## ✅ Verification & CI
 
-### 4. Suspension First on Offboarding
-If the run dies halfway, the account is already unable to sign in. The remaining steps are housekeeping. Ordering is asserted in tests, not commented.
+This project doesn't claim to be tested; it is **verified on every push**.
 
-### 5. Zero License Reclamation
-The seat stays attached until Drive ownership is transferred and any legal hold is confirmed. A test fails if someone adds a `revoke_license` action to the leaver path.
+### Local Verification
+Reproduce the CI environment locally on a bare Python install (no dependencies required):
+
+```bash
+$ python -m unittest discover -s tests -t . -v
+test_leaver_does_not_revoke_license (tests.test_plan.TestPlan) ... ok
+test_typo_in_ou_halts_execution (tests.test_cli.TestCLI) ... ok
+test_dry_run_produces_no_side_effects (tests.test_cli.TestCLI) ... ok
+...
+----------------------------------------------------------------------
+Ran 26 tests in 0.042s
+
+OK
+```
+
+### Automated CI Pipeline
+Every commit to `main` triggers the [![CI](https://github.com/ongunakaycom/workspace-provisioning-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/ongunakaycom/workspace-provisioning-demo/actions/workflows/ci.yml) workflow.  
+
+The pipeline:
+1. Provisions a fresh `ubuntu-latest` runner.
+2. Tests against **Python 3.11 and 3.12** (via matrix strategy).
+3. Executes the full offline test suite.
+4. Fails the build if any test fails, preventing broken code from merging.
 
 ---
 
 ## 🚀 Quick Start (Offline / No Credentials)
 
 ```bash
-# Run the test suite (26 unit and e2e tests)
+# 1. Run the test suite (26 unit and e2e tests)
 python -m unittest discover -s tests -t .
 
-# Execute a dry-run plan
+# 2. Execute a dry-run plan against the example data
 python -m provisioner.cli --input data/new_hires.example.csv \
     --snapshot data/snapshot.example.json
 ```
@@ -126,40 +125,28 @@ create_user     tim.berners@example.com            Tim Berners -> /Engineering
 remove_from_group=2, suspend_user=1, unsuspend_user=1
 ```
 
-*Ada Lovelace is in the input and produces no actions — because she is already correct. That is the whole point of the design.*
+*(Note: Ada Lovelace is in the input and produces 0 actions — because she is already correct. That is the whole point of idempotency.)*
 
 ---
 
-## 📦 Production Deployment
+## 🔐 Security & Best Practices
 
-Running against a live tenant requires a Super Admin and a service account.
-
-1. Enable **domain-wide delegation** for a service account and impersonate a super admin.
-2. Grant scopes: `admin.directory.user`, `admin.directory.group.member`, `apps.licensing`.
-3. Save the key as `credentials.json` — it is git-ignored, and it must stay that way.
-4. Start with `--fake --apply` against a snapshot from production, then compare results before touching the real directory.
+*   **Dry-Run by Default:** The CLI requires an explicit `--apply` flag to mutate a live directory. Engineers can review the entire diff before execution.
+*   **Fail-Fast OU Allowlist:** An HR typo (`/Enginering`) halts the run with exit code 2. It will never silently create a policy dead zone.
+*   **Suspension-First Offboarding:** If a run dies halfway, the account is already blocked from signing in. Remaining steps are housekeeping.
+*   **Zero License Reclamation:** Seats stay attached until Drive ownership and Vault holds are confirmed. A test fails if someone tries to add `revoke_license` to the leaver path.
+*   **Resilient API Layer:** Exponential backoff for `429` and `5xx` errors. `4xx` errors fail immediately (no noise retries).
+*   **Credentials Hygiene:** Production keys (`credentials.json`) are strictly `.gitignore`d. Test suites run entirely offline.
 
 ---
 
-## 📋 Scope & Limitations
+## 🗺️ Roadmap (Next Steps)
 
-This engine is intentionally scoped to solve the JML problem precisely:
-- **No Drive transfer / Vault hold** — these are policy decisions, not script defaults.
-- **No Terraform for GCP** — project structure is a separate state file.
-- **No nested groups** — `add_to_group` is flat membership.
-- **Not battle-tested at 1,500+ users** — it runs on an example snapshot and a fake directory.
-
-## 🗺 Roadmap
 - [ ] Drive ownership transfer as an explicit step in `_plan_leaver`
 - [ ] Vault matter/hold lookup before license reclaim
-- [ ] Terraform module for GCP project/OU skeleton with the same allowlist idea
+- [ ] Terraform module for the GCP project and OU skeleton (using the same allowlist paradigm)
 - [ ] Structured audit log (one line per action, shipped to BigQuery)
-
----
-
-## 📜 Apps Script Variant
-
-`apps_script/Code.gs` is the same idea for the case where an admin should be able to run it from a Sheet without a deployment pipeline — smaller, with a `DRY_RUN` constant at the top and a log sheet. Python for anything on a schedule or in CI; Apps Script for the one-off a hiring manager asks for on a Friday afternoon.
+- [ ] Helm chart for deploying the engine as a scheduled K8s CronJob
 
 ---
 
@@ -167,7 +154,7 @@ This engine is intentionally scoped to solve the JML problem precisely:
 
 <div align="center">
 
-**Ongun Akay** — Cloud Engineer
+**Ongun Akay** — Cloud Engineer  
 *Google Cloud · AI/LLM · GKE & Cloud Run*
 
 [![Website](https://img.shields.io/badge/Website-ongunakay.com-000000?style=flat-square&logo=google-chrome)](https://ongunakay.com)
