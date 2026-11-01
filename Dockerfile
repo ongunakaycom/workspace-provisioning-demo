@@ -1,24 +1,18 @@
 # syntax=docker/dockerfile:1
 
-# ---------- Stage 1: Build / dependency resolution ----------
-FROM python:3.12-slim AS builder
+FROM python:3.12-slim
+
 WORKDIR /app
 
-# No dependencies to install (stdlib only), but this stage
-# is where you would add `pip install -r requirements.txt`
+# Create a non-root user (Security Best Practice)
+RUN useradd -m -u 1001 -s /bin/bash provisioner
+
+# Copy application code directly
 COPY provisioner/ ./provisioner/
 COPY data/ ./data/
 
-# ---------- Stage 2: Runtime (hardened) ----------
-FROM python:3.12-slim AS runtime
-WORKDIR /app
-
-# Non-root user (security best practice)
-RUN useradd -m -u 1001 -s /bin/bash provisioner
-
-# Copy application code with correct ownership
-COPY --chown=provisioner:provisioner provisioner/ ./provisioner/
-COPY --chown=provisioner:provisioner data/ ./data/
+# Ensure the non-root user owns the app directory
+RUN chown -R provisioner:provisioner /app
 
 USER provisioner
 

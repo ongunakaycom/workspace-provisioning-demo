@@ -1,4 +1,3 @@
-# .dockerignore
 .git
 .github
 .vscode
@@ -7,7 +6,6 @@ __pycache__
 *.pyo
 tests/
 docs/
-data/snapshot.production.json
 credentials.json
 .venv
 venv/
