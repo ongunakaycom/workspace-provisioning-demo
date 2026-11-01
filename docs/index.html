@@ -8,22 +8,27 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0d1117; color: #c9d1d9; padding: 40px; }
         .container { max-width: 1000px; margin: 0 auto; }
         h1 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .subtitle { color: #8b949e; margin-bottom: 30px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
         .card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 20px; }
         h2 { font-size: 16px; color: #8b949e; margin-top: 0; }
         pre { background: #010409; padding: 15px; border-radius: 6px; overflow-x: auto; font-family: monospace; font-size: 13px; color: #e6edf3; }
-        button { background: #238636; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: 600; margin-top: 20px; display: block; width: 100%; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button { background: #238636; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: 600; flex: 1; }
         button:hover { background: #2ea043; }
+        button.reset { background: #30363d; }
+        button.reset:hover { background: #484f58; }
         .output { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 20px; margin-top: 20px; display: none; }
         .output h2 { color: #3fb950; }
-        .highlight { color: #d2a8ff; }
-        .action { color: #79c0ff; }
+        .note { background: #1f2428; border-left: 4px solid #58a6ff; padding: 15px; margin-top: 30px; font-size: 14px; }
+        .action { color: #79c0ff; font-weight: bold; }
+        .count { color: #d2a8ff; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>☁️ Workspace Provisioning Engine</h1>
-        <p>Interactive Dry-Run Demonstration (Pure Function Simulation)</p>
+        <div class="subtitle">Interactive Dry-Run Demonstration (Pure Function Simulation)</div>
         
         <div class="grid">
             <div class="card">
@@ -44,7 +49,10 @@ Katherine Johnson,katherine.johnson@example.com,Operations,Leaving</pre>
             </div>
         </div>
 
-        <button onclick="runPlan()">▶️ Execute Dry-Run Plan</button>
+        <div class="btn-group">
+            <button onclick="runPlan()">▶️ Execute Dry-Run Plan</button>
+            <button class="reset" onclick="resetPlan()">🔄 Reset</button>
+        </div>
 
         <div class="output" id="output">
             <h2>✅ Plan Generated (0 API calls made)</h2>
@@ -60,14 +68,21 @@ Katherine Johnson,katherine.johnson@example.com,Operations,Leaving</pre>
 <span class="action">remove_from_group</span> data-team                      katherine.johnson@example.com
 <span class="action">remove_from_group</span> ops-oncall                     katherine.johnson@example.com
 
-<span class="highlight">5 action(s): create_user=1, add_to_group=2, assign_license=1, unsuspend_user=1, suspend_user=1, move_user=1, remove_from_group=2</span>
+<span class="count">9 action(s): create_user=1, add_to_group=2, assign_license=1, unsuspend_user=1, suspend_user=1, move_user=1, remove_from_group=2</span>
             </pre>
+        </div>
+
+        <div class="note">
+            <strong>🛡️ Zero-Trust Architecture:</strong> Notice that Grace Hopper is in the input but produces <strong>0 actions</strong>. Her state is already correct. This is the essence of idempotency — the engine only acts on the <em>delta</em> between HR and the directory.
         </div>
     </div>
 
     <script>
         function runPlan() {
             document.getElementById('output').style.display = 'block';
+        }
+        function resetPlan() {
+            document.getElementById('output').style.display = 'none';
         }
     </script>
 </body>
