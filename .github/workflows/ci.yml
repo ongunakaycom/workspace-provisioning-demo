@@ -3,6 +3,8 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -43,7 +45,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_PAT }} # <--- PAT secret used here
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
