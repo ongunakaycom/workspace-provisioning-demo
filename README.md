@@ -8,6 +8,7 @@
 [![Google Workspace](https://img.shields.io/badge/Google_Workspace-Admin_SDK-4285F4?logo=google&logoColor=white)](https://developers.google.com/admin-sdk)
 [![Docker Image](https://img.shields.io/badge/GHCR-Published-blue?logo=docker)](https://github.com/ongunakaycom/workspace-provisioning-demo/pkgs/container/workspace-provisioning-demo)
 [![GHCR Published](https://img.shields.io/badge/GHCR-Published-blue?logo=docker)](https://github.com/ongunakaycom/workspace-provisioning-demo/pkgs/container/workspace-provisioning-demo)
+[![ADR](https://img.shields.io/badge/Architecture_Decisions-Read_Here-blueviolet?style=flat-square)](./docs/decisions.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 A production-grade, idempotent Joiner-Mover-Leaver (JML) engine designed for high-compliance environments.  
