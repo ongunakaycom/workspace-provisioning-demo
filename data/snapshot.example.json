@@ -1,0 +1,32 @@
+{
+  "users": [
+    {
+      "email": "ada.lovelace@example.com",
+      "org_unit": "/Engineering",
+      "suspended": false,
+      "groups": ["eng-core"],
+      "license_sku": "Google-Apps-For-Business"
+    },
+    {
+      "email": "grace.hopper@example.com",
+      "org_unit": "/Engineering/Platform",
+      "suspended": false,
+      "groups": [],
+      "license_sku": null
+    },
+    {
+      "email": "alan.turing@example.com",
+      "org_unit": "/Operations",
+      "suspended": true,
+      "groups": ["ops-oncall"],
+      "license_sku": "Google-Apps-For-Business"
+    },
+    {
+      "email": "katherine.johnson@example.com",
+      "org_unit": "/Operations",
+      "suspended": false,
+      "groups": ["ops-oncall", "data-team"],
+      "license_sku": "Google-Apps-For-Business"
+    }
+  ]
+}

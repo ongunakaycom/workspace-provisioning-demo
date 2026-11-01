@@ -1,0 +1,6 @@
+email,first_name,last_name,org_unit,groups,license_sku,start_date,status
+ada.lovelace@example.com,Ada,Lovelace,/Engineering,eng-core,Google-Apps-For-Business,2019-03-01,active
+grace.hopper@example.com,Grace,Hopper,/Engineering/Platform,eng-core,Google-Apps-For-Business,2024-11-04,active
+tim.berners@example.com,Tim,Berners,/Engineering,eng-core;new-hires,,2026-11-02,active
+alan.turing@example.com,Alan,Turing,/Operations,ops-oncall,Google-Apps-For-Business,2026-11-02,active
+katherine.johnson@example.com,Katherine,Johnson,/Operations,ops-oncall;data-team,Google-Apps-For-Business,2018-06-15,leaver
