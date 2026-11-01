@@ -4,15 +4,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Create a non-root user (Security Best Practice)
+# Create a non-root user
 RUN useradd -m -u 1001 -s /bin/bash provisioner
 
-# Copy application code directly
-COPY provisioner/ ./provisioner/
-COPY data/ ./data/
-
-# Ensure the non-root user owns the app directory
-RUN chown -R provisioner:provisioner /app
+# Copy files and change ownership in ONE step (much faster)
+COPY --chown=provisioner:provisioner provisioner/ ./provisioner/
+COPY --chown=provisioner:provisioner data/ ./data/
 
 USER provisioner
 
