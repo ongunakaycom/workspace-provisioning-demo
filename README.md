@@ -1,15 +1,16 @@
 <div align="center">
 
-# ☁️ Workspace Provisioning Engine — Cloud Engineer Portfolio
+# ☁️ Workspace Provisioning Engine
 
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org)
+**Idempotent Joiner-Mover-Leaver (JML) automation for Google Workspace**
+
+*Reconcile HR truth with directory state — purely, safely, and without credentials.*
+
+[![CI](https://github.com/ongunakaycom/workspace-provisioning-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/ongunakaycom/workspace-provisioning-demo/actions/workflows/ci.yml)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)](https://www.python.org)
 [![Google Workspace](https://img.shields.io/badge/Google_Workspace-Admin_SDK-4285F4?logo=google&logoColor=white)](https://developers.google.com/admin-sdk)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-26%20Passing-success.svg)]()
 [![Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen.svg)]()
-
-An idempotent, dry-run-first Joiner-Mover-Leaver (JML) engine for Google Workspace.
-*Reconcile HR truth with directory state — safely, purely, and without credentials.*
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 </div>
 
